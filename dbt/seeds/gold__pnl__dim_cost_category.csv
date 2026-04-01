@@ -1,0 +1,8 @@
+cost_category_key,cost_category,cost_group,description
+member_salary,Member Salary,Member Cost,Base salary prorated by working days
+member_bonus,Project Bonus,Member Cost,Project bonus allocations
+member_overtime,Overtime,Member Cost,Overtime hours cost
+project_expense,Project Expense,Project Expense,Project package overhead
+op_hr,HR / Interviews,Operational,Human resources and interview costs
+op_training,Training / Resource Pool,Operational,Training and resource pool costs
+op_presale,Presale,Operational,Presale effort costs

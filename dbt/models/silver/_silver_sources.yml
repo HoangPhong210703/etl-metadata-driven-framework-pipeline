@@ -1,12 +1,33 @@
 version: 2
 
 sources:
+  # --- Odoo CRM (postgres_crm) ---
   - name: stg__accounting__postgres_crm
     schema: stg__accounting__postgres_crm
     tables:
       - name: account_account
+      - name: project_project
+      - name: hr_department
 
+  # --- Odoo Timesheet (postgres_timesheet) ---
   - name: stg__accounting__postgres_timesheet
     schema: stg__accounting__postgres_timesheet
     tables:
       - name: account_account
+      - name: savvycom_project_project
+      - name: savvycom_project_project_member
+      - name: adjusted_attendance_register
+      - name: hr_employee
+      - name: savvycom_unit
+      - name: sale_order
+
+  # --- ERPNext (maria_erp) ---
+  - name: stg__project__maria_erp
+    schema: stg__project__maria_erp
+    tables:
+      - name: tabProject
+      - name: tabProject Package
+      - name: tabEmployee
+      - name: tabEmployment Contract
+      - name: tabDepartment
+      - name: tabHoliday

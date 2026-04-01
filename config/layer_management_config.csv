@@ -4,3 +4,4 @@ src2brz,brz2sil,accounting,postgres_timesheet,1,1
 src2brz,brz2sil,project,maria_erp,1,1
 brz2sil,stg2sil,accounting,postgres_crm,1,1
 brz2sil,stg2sil,accounting,postgres_timesheet,1,1
+brz2sil,stg2sil,project,maria_erp,1,1

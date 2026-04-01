@@ -1,0 +1,183 @@
+version: 2
+
+models:
+
+  # ── Shared Dimension ──────────────────────────────────────────────
+  - name: gold__common__dim_date
+    description: >
+      Calendar dimension from 2020-01-01 to 2030-12-31 with working day
+      calculations based on weekends and holidays from ERPNext.
+    columns:
+      - name: date_key
+        description: "Surrogate key (integer YYYYMMDD)"
+        tests:
+          - unique
+          - not_null
+      - name: date_actual
+        description: "Calendar date"
+        tests:
+          - unique
+          - not_null
+      - name: year
+        tests: [not_null]
+      - name: month
+        tests: [not_null]
+      - name: is_working_day
+        description: "True if not a weekend and not a holiday"
+        tests: [not_null]
+      - name: working_day_of_month
+        description: "Sequential working day number within month (NULL for non-working days)"
+      - name: total_working_days_in_month
+        description: "Count of working days in that calendar month"
+        tests: [not_null]
+
+  # ── PnL Dimensions ───────────────────────────────────────────────
+  - name: gold__pnl__dim_organization
+    description: >
+      Company / Division / Department hierarchy from Odoo units,
+      Odoo CRM departments, and ERPNext departments.
+    columns:
+      - name: org_key
+        description: "Surrogate key (MD5 hash)"
+        tests:
+          - unique
+          - not_null
+      - name: company_name
+        tests: [not_null]
+      - name: department_name
+        description: "Department name (finest grain)"
+      - name: _source
+        description: "'postgres_crm' or 'maria_erp'"
+        tests: [not_null]
+
+  - name: gold__pnl__dim_project
+    description: >
+      Project dimension combining Odoo timesheet projects (teambase data)
+      and ERPNext projects (fix cost completion rates from tabProject Package).
+    columns:
+      - name: project_key
+        description: "Surrogate key (MD5 hash)"
+        tests:
+          - unique
+          - not_null
+      - name: project_id
+        description: "Natural key from source system"
+        tests: [not_null]
+      - name: project_name
+        tests: [not_null]
+      - name: project_type
+        description: "'Fix Cost' or 'Teambase'"
+      - name: _source
+        description: "'postgres_timesheet' or 'maria_erp'"
+        tests: [not_null]
+
+  - name: gold__pnl__dim_employee
+    description: >
+      Employee / Resource dimension from Odoo HR and ERPNext.
+      Salary data sourced from ERPNext Employment Contract.
+    columns:
+      - name: employee_key
+        description: "Surrogate key (MD5 hash)"
+        tests:
+          - unique
+          - not_null
+      - name: employee_id
+        description: "Natural key from source system"
+        tests: [not_null]
+      - name: employee_name
+        tests: [not_null]
+      - name: base_salary
+        description: "Monthly base salary (from ERPNext Employment Contract, NULL for Odoo)"
+      - name: _source
+        description: "'postgres_crm' or 'maria_erp'"
+        tests: [not_null]
+
+  # ── PnL Fact Tables ──────────────────────────────────────────────
+  - name: gold__pnl__fct_revenue_monthly
+    description: >
+      Monthly revenue by project. Teambase revenue = rate x hours.
+      Fix Cost revenue = contract x completion rate (placeholder for missing tables).
+    columns:
+      - name: revenue_monthly_key
+        description: "Surrogate key (month + project)"
+        tests:
+          - unique
+          - not_null
+      - name: date_key
+        description: "FK to dim_date (first of month, YYYYMM01)"
+        tests: [not_null]
+      - name: project_key
+        description: "FK to dim_project"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('gold__pnl__dim_project')
+              field: project_key
+      - name: revenue_type
+        description: "'fix_cost' or 'teambase'"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['fix_cost', 'teambase']
+              config:
+                severity: warn
+      - name: revenue_actual
+        description: "Actual revenue for the month"
+      - name: revenue_forecast
+        description: "Forecasted revenue for the month"
+
+  - name: gold__pnl__fct_cost_monthly
+    description: >
+      Monthly cost allocations at (month, employee, project, cost_category) grain.
+      Salary prorated by working days. Overtime at 1.5x rate.
+    columns:
+      - name: cost_monthly_key
+        description: "Surrogate key"
+        tests:
+          - unique
+          - not_null
+      - name: date_key
+        description: "FK to dim_date (first of month)"
+        tests: [not_null]
+      - name: employee_key
+        description: "FK to dim_employee"
+        tests: [not_null]
+      - name: cost_category_key
+        description: "FK to dim_cost_category seed"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('gold__pnl__dim_cost_category')
+              field: cost_category_key
+      - name: prorated_salary
+        description: "salary x (days_worked / working_days_in_month)"
+      - name: cost_actual
+        description: "Total actual cost for this row"
+
+  - name: gold__pnl__fct_headcount_monthly
+    description: >
+      Monthly headcount snapshot for KPI calculation.
+      Derives Billable Rate, Busy Rate, Available HC, Dev Avg Salary.
+    columns:
+      - name: headcount_monthly_key
+        description: "Surrogate key (month + employee)"
+        tests:
+          - unique
+          - not_null
+      - name: date_key
+        description: "FK to dim_date (first of month)"
+        tests: [not_null]
+      - name: employee_key
+        description: "FK to dim_employee"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('gold__pnl__dim_employee')
+              field: employee_key
+      - name: is_active
+        tests: [not_null]
+      - name: is_billable
+        tests: [not_null]
+      - name: headcount_value
+        description: "1.0 for full-time, 0.5 for part-time"
+        tests: [not_null]

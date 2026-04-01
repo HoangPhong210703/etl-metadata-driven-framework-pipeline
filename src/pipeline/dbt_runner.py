@@ -35,6 +35,20 @@ def run_dbt(dbt_project_dir: Path, selectors: list[str] | None = None) -> None:
             raise RuntimeError(f"dbt run --select {selector} failed with exit code {result.returncode}")
 
 
+def run_dbt_seed(dbt_project_dir: Path) -> None:
+    """Run dbt seed to load CSV seed files."""
+    result = subprocess.run(
+        ["dbt", "seed", "--profiles-dir", str(dbt_project_dir)],
+        cwd=str(dbt_project_dir),
+        capture_output=True,
+        text=True,
+    )
+    print(result.stdout)
+    if result.returncode != 0:
+        print(result.stderr)
+        raise RuntimeError(f"dbt seed failed with exit code {result.returncode}")
+
+
 def run_dbt_snapshot(dbt_project_dir: Path) -> None:
     """Run dbt snapshots (SCD-2 tables)."""
     result = subprocess.run(
@@ -49,10 +63,14 @@ def run_dbt_snapshot(dbt_project_dir: Path) -> None:
         raise RuntimeError(f"dbt snapshot failed with exit code {result.returncode}")
 
 
-def run_dbt_test(dbt_project_dir: Path) -> None:
+def run_dbt_test(dbt_project_dir: Path, selectors: list[str] | None = None) -> None:
     """Run dbt tests. Logs warnings but does not raise on failure."""
+    cmd = ["dbt", "test", "--profiles-dir", str(dbt_project_dir)]
+    if selectors:
+        for selector in selectors:
+            cmd.extend(["--select", selector])
     result = subprocess.run(
-        ["dbt", "test", "--profiles-dir", str(dbt_project_dir)],
+        cmd,
         cwd=str(dbt_project_dir),
         capture_output=True,
         text=True,

@@ -13,6 +13,14 @@ models:
   etl_warehouse:
     silver:
       +schema: sil
+    gold:
+      +schema: gold
+      +materialized: table
+
+seeds:
+  etl_warehouse:
+    gold__pnl__dim_cost_category:
+      +schema: gold__pnl
 
 snapshots:
   etl_warehouse:

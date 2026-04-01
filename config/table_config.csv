@@ -50,3 +50,16 @@ id,table_name,source_name,source_schema,data_subject,load_strategy,cursor_column
 49,tabProject Model,maria_erp,appdb,project,incremental,modified,1/1/2024,name,60,1
 50,tabProject Package,maria_erp,appdb,project,incremental,modified,1/1/2024,name,60,1
 51,tabProject User,maria_erp,appdb,project,incremental,modified,1/1/2024,name,60,1
+52,project_project,postgres_crm,public,accounting,incremental,write_date,1/1/2024,id,10,1
+53,crm_lead,postgres_crm,public,accounting,incremental,write_date,1/1/2024,id,10,1
+54,hr_department,postgres_crm,public,accounting,incremental,write_date,1/1/2024,id,10,1
+55,savvycom_project_project,postgres_timesheet,public,accounting,incremental,write_date,1/1/2024,id,40,1
+56,savvycom_project_project_member,postgres_timesheet,public,accounting,incremental,write_date,1/1/2024,id,40,1
+57,adjusted_attendance_register,postgres_timesheet,public,accounting,incremental,write_date,1/1/2024,id,40,1
+58,hr_employee,postgres_timesheet,public,accounting,incremental,write_date,1/1/2024,id,40,1
+59,savvycom_unit,postgres_timesheet,public,accounting,incremental,write_date,1/1/2024,id,40,1
+60,sale_order,postgres_timesheet,public,accounting,incremental,write_date,1/1/2024,id,40,1
+61,tabEmployment Contract,maria_erp,appdb,project,incremental,modified,1/1/2024,name,60,1
+62,tabEmployee,maria_erp,appdb,project,incremental,modified,1/1/2024,name,60,1
+63,tabDepartment,maria_erp,appdb,project,incremental,modified,1/1/2024,name,60,1
+64,tabHoliday,maria_erp,appdb,project,full,,1/1/2024,name,60,1
