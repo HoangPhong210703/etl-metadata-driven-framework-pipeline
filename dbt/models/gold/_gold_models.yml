@@ -181,3 +181,161 @@ models:
       - name: headcount_value
         description: "1.0 for full-time, 0.5 for part-time"
         tests: [not_null]
+
+  # ── PnL Report Models ───────────────────────────────────────────
+  - name: gold__pnl__rpt_monthly_pnl
+    description: >
+      Monthly P&L summary — revenue, cost, gross profit.
+      Powers: Revenue KPI, P&L KPI, Total Revenue by Month, P&L by Month.
+    columns:
+      - name: date_key
+        tests: [not_null]
+      - name: month_date
+        tests: [not_null, unique]
+      - name: total_revenue_actual
+        description: "Sum of teambase + fix cost actual revenue"
+      - name: total_cost_actual
+        description: "Sum of salary + overtime actual cost"
+      - name: gross_profit_actual
+        description: "total_revenue_actual - total_cost_actual"
+      - name: gross_margin_pct
+        description: "gross_profit / revenue (0-1 scale)"
+
+  - name: gold__pnl__rpt_rate_metrics
+    description: >
+      Monthly headcount rate KPIs.
+      Powers: Busy Rate widget, Billable Rate widget.
+    columns:
+      - name: date_key
+        tests: [not_null]
+      - name: month_date
+        tests: [not_null, unique]
+      - name: billable_rate
+        description: "billable_count / total_headcount (0-1 scale)"
+      - name: busy_rate
+        description: "(billable + hr_project) / total_headcount (0-1 scale)"
+      - name: total_headcount
+        description: "Active employees in the month"
+
+  - name: gold__pnl__rpt_revenue_mix
+    description: >
+      Revenue breakdown by type per month.
+      Powers: Revenue Percentage pie/donut chart.
+    columns:
+      - name: revenue_type
+        tests: [not_null]
+      - name: revenue_actual
+        description: "Actual revenue for this type"
+      - name: revenue_pct
+        description: "Share of total monthly revenue (0-1 scale)"
+
+  - name: gold__pnl__rpt_cost_mix
+    description: >
+      Cost breakdown by category per month.
+      Powers: Cost Percentage pie/donut chart.
+    columns:
+      - name: cost_category
+        description: "Cost category name from seed"
+      - name: cost_actual
+        description: "Actual cost for this category"
+      - name: cost_pct
+        description: "Share of total monthly cost (0-1 scale)"
+
+  - name: gold__pnl__rpt_hr_summary
+    description: >
+      Monthly HR KPIs by division.
+      Powers: Human Resource widget (Dev Avg Salary, Total/Outsource/Internal/Training/Available HC, Turnover Rate).
+    columns:
+      - name: month_date
+        tests: [not_null]
+      - name: division_name
+      - name: total_hc
+        description: "Total active headcount"
+      - name: outsource_hc
+        description: "Placeholder: external employees"
+      - name: internal_hc
+        description: "Placeholder: internal employees"
+      - name: training_hc
+        description: "Employees in training projects"
+      - name: available_hc
+        description: "Employees in pool projects"
+      - name: turnover_rate
+        description: "Placeholder: (departed / avg HC) × 100"
+      - name: dev_avg_salary
+        description: "Average salary of active headcount"
+
+  - name: gold__pnl__rpt_revenue_by_project
+    description: >
+      Revenue detail per project per month, groupable by division/market/project type.
+      Powers: Revenue Details Report → Revenue by project.
+    columns:
+      - name: month_date
+        tests: [not_null]
+      - name: project_name
+        tests: [not_null]
+      - name: project_type
+      - name: market
+      - name: division
+        description: "Placeholder: needs project→division mapping"
+      - name: revenue_actual
+      - name: revenue_forecast
+
+  - name: gold__pnl__rpt_revenue_by_member
+    description: >
+      Revenue contribution per employee per project per month.
+      Powers: Revenue Details Report → Project revenue report by members.
+      Fully placeholder — requires tabProject User and timesheet data.
+    columns:
+      - name: month_date
+      - name: employee_name
+      - name: project_name
+      - name: effort_days
+        description: "Placeholder: working days on project"
+      - name: effort_hours
+        description: "Placeholder: hours on project"
+      - name: performance_rate
+        description: "Placeholder: from tabProject User (0.1-0.3)"
+      - name: employee_rate
+        description: "Placeholder: from project_contract_headcount"
+      - name: revenue_actual
+      - name: revenue_forecast
+
+  - name: gold__pnl__rpt_cost_summary
+    description: >
+      Cost breakdown by type and division per month.
+      Powers: Cost Report (production, HR, training, presale, resource pool).
+    columns:
+      - name: month_date
+        tests: [not_null]
+      - name: division_name
+      - name: production_cost_actual
+        description: "Fix cost + teambase member cost"
+      - name: hr_cost_actual
+        description: "Placeholder: interview hour cost"
+      - name: training_cost_actual
+        description: "Placeholder: training/RP hour cost"
+      - name: presale_cost_actual
+        description: "Placeholder: presale project hour cost"
+      - name: resource_pool_cost_actual
+        description: "Placeholder: pool employee cost"
+      - name: total_cost_actual
+
+  - name: gold__pnl__rpt_employee_performance
+    description: >
+      Employee performance summary and details per project per month.
+      Powers: Employee Performance module.
+      Fully placeholder — requires tabProject User, timesheet, and direct cost data.
+    columns:
+      - name: month_date
+      - name: employee_name
+      - name: project_name
+      - name: effort_rate
+        description: "Placeholder: from tabProject User"
+      - name: performance_rate
+        description: "Placeholder: from tabProject User (0.1-0.3)"
+      - name: revenue_contribution
+        description: "Placeholder: avg_revenue_rate × effort × performance"
+      - name: cost_contribution
+        description: "Placeholder: direct_cost prorated"
+      - name: profit_contribution
+        description: "Placeholder: revenue - cost per member"
