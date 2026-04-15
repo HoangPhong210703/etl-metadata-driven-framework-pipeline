@@ -16,4 +16,8 @@ dbt/logs/
 .env
 .vscode/
 .scripts/
-
+zdashboard_req/
+CLAUDE.md
+CodingConvention.md
+logs/
+docs/
