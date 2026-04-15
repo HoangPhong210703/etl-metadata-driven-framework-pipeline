@@ -8,7 +8,7 @@ DAG_ID = "src2brz__project__maria_erp"
 with DAG(
     dag_id=DAG_ID,
     description="Button: trigger source-to-bronze for project from maria_erp",
-    schedule=None,
+    schedule='*/30 * * * *',
     start_date=datetime(2024, 1, 1),
     catchup=False,
     tags=['button', 'src2brz', 'project', 'maria_erp'],

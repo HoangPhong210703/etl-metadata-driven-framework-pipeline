@@ -8,7 +8,7 @@ DAG_ID = "src2brz__accounting__postgres_timesheet"
 with DAG(
     dag_id=DAG_ID,
     description="Button: trigger source-to-bronze for accounting from postgres_timesheet",
-    schedule=None,
+    schedule='*/30 * * * *',
     start_date=datetime(2024, 1, 1),
     catchup=False,
     tags=['button', 'src2brz', 'accounting', 'postgres_timesheet'],
