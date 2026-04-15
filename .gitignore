@@ -13,8 +13,7 @@ dbt/logs/
 .dlt/secrets.toml
 .dlt/pipelines/
 .claude/
-pseudocode.py
 .env
 .vscode/
 .scripts/
-CLAUDE.md
+
