@@ -7,7 +7,7 @@ with date_spine as (
 
     select
         d::date as date_actual
-    from generate_series('2020-01-01'::date, '2030-12-31'::date, '1 day'::interval) as d
+    from generate_series('2020-01-01'::date, '2050-12-31'::date, '1 day'::interval) as d
 
 ),
 

@@ -18,3 +18,5 @@ pseudocode.py
 .vscode/
 .scripts/
 CLAUDE.md
+zdashboard_req/
+CodingConventions.md
