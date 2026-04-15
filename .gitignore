@@ -13,7 +13,6 @@ dbt/logs/
 .dlt/secrets.toml
 .dlt/pipelines/
 .claude/
-.env
 .vscode/
 .scripts/
 zdashboard_req/
